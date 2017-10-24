@@ -153,7 +153,12 @@ public class DobbeltLenketListe<T> implements Liste<T>
     @Override
     public boolean leggInn(T verdi)
     {
-        throw new UnsupportedOperationException("Ikke laget ennå!");
+        Objects.requireNonNull(verdi, "Tabellen er null!");
+        Node<T> p = new Node<>(verdi, hale, null);
+        hale = tom() ? (hode = p) : (hale.neste = p);
+        antall++;
+        endringer++;
+        return true;
     }
 
     @Override
@@ -202,12 +207,25 @@ public class DobbeltLenketListe<T> implements Liste<T>
     @Override
     public String toString()
     {
-        throw new UnsupportedOperationException("Ikke laget ennå!");
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        for (Node<T> i = hode; i != null; i = i.neste) {
+            sb.append(String.valueOf(i.verdi)+ ",");
+        }
+        sb.append(']');
+        return sb.toString();
+
     }
 
     public String omvendtString()
     {
-        throw new UnsupportedOperationException("Ikke laget ennå!");
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        for (Node<T> i = hale; i != null; i = i.forrige){
+            sb.append(String.valueOf(i.verdi)+ ",");
+        }
+        sb.append(']');
+        return sb.toString();
     }
 
     public static <T> void sorter(Liste<T> liste, Comparator<? super T> c)
