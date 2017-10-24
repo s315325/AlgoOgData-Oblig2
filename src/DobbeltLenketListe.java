@@ -231,7 +231,7 @@ public class DobbeltLenketListe<T> implements Liste<T>
 
         for (int indeks = 0; indeks < antall; indeks++, a = a.neste) {
             if (IKKE FERDIG) return indeks;
-        } // a.verdi.equals(verdi) istedenfor IKKE FERDIG?
+        } // a.verdi.equals(verdi) istedenfor IKKE FERDIG? Hentet fra fasiten
 
         return -1;
     }
