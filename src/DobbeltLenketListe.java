@@ -229,7 +229,6 @@ public class DobbeltLenketListe<T> implements Liste<T>
 
     public boolean inneholder(T verdi) {
 
-        if indeksTil(verdi) // what? will try something else
         return indeksTil(verdi) != -1;
     }
 
