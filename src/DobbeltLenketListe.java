@@ -114,23 +114,11 @@ public class DobbeltLenketListe<T> implements Liste<T>
         throw new UnsupportedOperationException("Ikke laget ennå!");
     }
 
-    /*@Override
-    public boolean inneholder(T verdi)
-    {
-        throw new UnsupportedOperationException("Ikke laget ennå!");
-    }*/
-
     @Override
     public T hent(int indeks)
     {
         throw new UnsupportedOperationException("Ikke laget ennå!");
     }
-
-    /*@Override
-    public int indeksTil(T verdi)
-    {
-        throw new UnsupportedOperationException("Ikke laget ennå!");
-    }*/
 
     @Override
     public T oppdater(int indeks, T nyverdi)
