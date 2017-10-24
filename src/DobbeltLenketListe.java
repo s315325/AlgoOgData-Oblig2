@@ -162,24 +162,12 @@ public class DobbeltLenketListe<T> implements Liste<T>
         throw new UnsupportedOperationException("Ikke laget ennå!");
     }
 
-    /*@Override
-    public boolean inneholder(T verdi)
-    {
-        throw new UnsupportedOperationException("Ikke laget ennå!");
-    }*/
-
     @Override
     public T hent(int indeks)
     {
         indeksKontroll(indeks, false);
         return finnNode(indeks).verdi;
     }
-
-    /*@Override
-    public int indeksTil(T verdi)
-    {
-        throw new UnsupportedOperationException("Ikke laget ennå!");
-    }*/
 
     @Override
     public T oppdater(int indeks, T nyverdi)
@@ -280,13 +268,15 @@ public class DobbeltLenketListe<T> implements Liste<T>
 
      public int indeksTil(T verdi) {
 
+        System.out.println("Oppgave 4"); // Should be removed
+
         if (verdi == null)  return -1;
 
         Node<T> a = hode;
 
         for (int indeks = 0; indeks < antall; indeks++, a = a.neste) {
-            if (IKKE FERDIG) return indeks;
-        } // a.verdi.equals(verdi) istedenfor IKKE FERDIG?
+            if (NOT DONE) return indeks;
+        } // a.verdi.equals(verdi) instead of NOT DONE? Copied shamelessly from the answers sheet.
 
         return -1;
     }
@@ -294,7 +284,6 @@ public class DobbeltLenketListe<T> implements Liste<T>
 
     public boolean inneholder(T verdi) {
 
-        if indeksTil(verdi) // what? will try something else
         return indeksTil(verdi) != -1;
     }
 
