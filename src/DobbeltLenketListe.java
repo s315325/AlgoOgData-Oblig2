@@ -52,15 +52,20 @@ public class DobbeltLenketListe<T> implements Liste<T>
     }
 
     // konstruktør
-    public DobbeltLenketListe(T[] a)
-    {
-        System.out.println("- Konstruktør DobbeltLenketListe");
-        Node nyNode = new Node(a);
-        nyNode.neste = hode;
-        hode = nyNode;
-        antall++;
+    public DobbeltLenketListe(T[] a) {
+        Objects.requireNonNull(a, "Tabellen a er null!");
+        Node nyNode = new Node(a, hode, hale);
 
+        for(T verdi : a) {
+            if (hode != null) {
+                hode.forrige = nyNode;
+            }
+            hode = nyNode;
 
+            if (hale == null) {
+                hale = nyNode;}
+            antall++;
+        }
     }
 
     // subliste
