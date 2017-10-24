@@ -8,6 +8,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Comparator;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.StringJoiner;
 
 public class DobbeltLenketListe<T> implements Liste<T>
 {
@@ -33,14 +39,14 @@ public class DobbeltLenketListe<T> implements Liste<T>
 
     // instansvariabler
     private Node<T> hode;          // peker til den første i listen
-    private Node<T> hale;          // peker til den siste i listen
+    private Node hale;          // peker til den siste i listen
     private int antall;            // antall noder i listen
     private int endringer;   // antall endringer i listen
 
     // hjelpemetode
     private Node<T> finnNode(int indeks)
     {
-        throw new UnsupportedOperationException("Ikke laget ennå!");
+        throw new UnsupportedOperationException("Tabellen a er null!");
     }
 
     // konstruktør
@@ -53,19 +59,22 @@ public class DobbeltLenketListe<T> implements Liste<T>
 
     // konstruktør
     public DobbeltLenketListe(T[] a) {
-        Objects.requireNonNull(a, "Tabellen a er null!");
-        Node nyNode = new Node(a, hode, hale);
+        this();         //Kaller på konstruktøren i Node-klassen
+        //Objects.requireNonNull(a, "Tabllen er null!");
 
-        for(T verdi : a) {
-            if (hode != null) {
-                hode.forrige = nyNode;
+        hode = hale = new Node<>(null); //Lager en ny Node
+        //for (T verdi : a)
+        for(int i = 0; i< a.length; i++) //Lager en for-løkke som går igjennom T[]
+        {
+            T verdi = a[i];
+            if (verdi != null )
+            {
+                hale = hale.neste = new Node<>(verdi, hale, null);
+                antall++;
             }
-            hode = nyNode;
-
-            if (hale == null) {
-                hale = nyNode;}
-            antall++;
         }
+        if (antall == 0) hode = hale = null;        //Fjerner Noden
+        else (hode = hode.neste).forrige = null;
     }
 
     // subliste
