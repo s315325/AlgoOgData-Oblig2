@@ -1,4 +1,6 @@
 /////////// DobbeltLenketListe ////////////////////////////////////
+import com.sun.istack.internal.localization.NullLocalizable;
+
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -112,11 +114,11 @@ public class DobbeltLenketListe<T> implements Liste<T>
         throw new UnsupportedOperationException("Ikke laget ennå!");
     }
 
-    @Override
+    /*@Override
     public boolean inneholder(T verdi)
     {
         throw new UnsupportedOperationException("Ikke laget ennå!");
-    }
+    }*/
 
     @Override
     public T hent(int indeks)
@@ -124,11 +126,11 @@ public class DobbeltLenketListe<T> implements Liste<T>
         throw new UnsupportedOperationException("Ikke laget ennå!");
     }
 
-    @Override
+    /*@Override
     public int indeksTil(T verdi)
     {
         throw new UnsupportedOperationException("Ikke laget ennå!");
-    }
+    }*/
 
     @Override
     public T oppdater(int indeks, T nyverdi)
@@ -218,5 +220,29 @@ public class DobbeltLenketListe<T> implements Liste<T>
         }
 
     } // DobbeltLenketListeIterator
+
+    //// Oppgave 4 ////
+
+    public int indeksTil(T verdi) {
+
+        if (verdi == null)  return -1;
+
+        Node<T> a = hode;
+
+        for (int indeks = 0; indeks < antall; indeks++, a = a.neste) {
+            if (IKKE FERDIG) return indeks;
+        } // a.verdi.equals(verdi) istedenfor IKKE FERDIG?
+
+        return -1;
+    }
+
+
+    public boolean inneholder(T verdi) {
+
+        if indeksTil(verdi) // what? will try something else
+        return indeksTil(verdi) != -1;
+    }
+
+    //// Oppgave 5 /////
 
 } // DobbeltLenketListe
