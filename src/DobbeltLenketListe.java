@@ -372,21 +372,6 @@ public class DobbeltLenketListe<T> implements Liste<T>
 
     //// Oppgave 4 ////
 
-    /* public int indeksTil(T verdi) {
-
-        System.out.println("Oppgave 4"); // Should be removed
-
-        if (verdi == null)  return -1;
-
-        Node<T> a = hode;
-
-        for (int indeks = 0; indeks < antall; indeks++, a = a.neste) {
-            if (NOT DONE) return indeks;
-        } // a.verdi.equals(verdi) instead of NOT DONE? Copied shamelessly from the answers sheet.
-
-        return -1;
-    }*/
-
     @Override
     public int indeksTil(T verdi)
     {
