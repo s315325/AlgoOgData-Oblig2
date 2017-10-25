@@ -146,7 +146,7 @@ public class DobbeltLenketListe<T> implements Liste<T>
     public boolean tom()
     {
 
-       // return (hode == null); //Sjekker om første lenken er tom
+        if (hode == null); //Sjekker om første lenken er tom
         return antall == 0;
 
     }
@@ -171,7 +171,8 @@ public class DobbeltLenketListe<T> implements Liste<T>
         {
             hode = hale = new Node<>(verdi, null, null);
         }
-        else if (indeks == 0)                   // ny verdi forrest
+        // verdien legges inn først
+        else if (indeks == 0)
         {
             hode = hode.forrige = new Node<>(verdi, null, hode);
         }
@@ -229,6 +230,8 @@ public class DobbeltLenketListe<T> implements Liste<T>
         return fjernNode(finnNode(indeks)); // bruker de to hjelpemetodene
     }
 
+    // Finner ikke denne hjelpemetoden
+
     private T fjernNode(Node<T> p)  // private hjelpemetode
     {
         if (p == hode)
@@ -242,6 +245,26 @@ public class DobbeltLenketListe<T> implements Liste<T>
         endringer++;  // en endring
         return p.verdi;
     }
+
+    @Override
+    public void nullstill()
+    {
+        Node<T> p = hode;
+        while (p != null)
+        {
+            Node<T> q = p.neste;
+            p.verdi = null;
+            p.forrige = null;
+            p.neste = null;
+            p = q;
+        }
+        hode = hale = null;
+        antall = 0;
+        endringer++;
+    }
+    // Det viser seg at det er liten forskjell i effektivitet
+    // mellom nullstill() slik den er koden ovenfor og slik
+    // den er kodet under (som nullstill2)f
 
     @Override
     public String toString()
@@ -339,11 +362,13 @@ public class DobbeltLenketListe<T> implements Liste<T>
         public void remove()
         {
             if (!fjernOK) throw
-                    new IllegalStateException("Kan ikke fjerne en verdi nå!");
+                    new IllegalStateException("Ikke tillatt å fjerne verdien!");
             if (iteratorendringer != endringer) throw
                     new ConcurrentModificationException("Listen har blitt endret!");
-            // kommer vi hit, må next ha blitt kalt og en node kan fjernes
+
             fjernOK = false;
+
+
             fjernNode(denne == null ? hale : denne.forrige);  //den private hjelpemetoden
             iteratorendringer++;  // en endring i iteratoren
         }
@@ -351,6 +376,21 @@ public class DobbeltLenketListe<T> implements Liste<T>
     } // DobbeltLenketListeIterator
 
     //// Oppgave 4 ////
+
+    /* public int indeksTil(T verdi) {
+
+        System.out.println("Oppgave 4"); // Should be removed
+
+        if (verdi == null)  return -1;
+
+        Node<T> a = hode;
+
+        for (int indeks = 0; indeks < antall; indeks++, a = a.neste) {
+            if (NOT DONE) return indeks;
+        } // a.verdi.equals(verdi) instead of NOT DONE? Copied shamelessly from the answers sheet.
+
+        return -1;
+    }*/
 
     @Override
     public int indeksTil(T verdi)
@@ -370,37 +410,5 @@ public class DobbeltLenketListe<T> implements Liste<T>
     }
 
     //// Oppgave 5 /////
-
-    //// Oppgave 7 ////
-
-    @Override
-/*    public void nullstill() // KOPIERT FRA FASIT
-
-    {
-        Node<T> p = hode;
-        while (p != null)
-
-        {
-            Node<T> q = p.neste;
-            p.verdi = null;
-            p.forrige = null;
-            p.neste = null;
-            p = q;
-        }
-
-        hode = hale = null;
-        antall = 0;
-        endringer++;
-
-    }*/
-
-    public void nullstill2()
-
-    {
-        while (antall > 0) fjern(0);
-    }
-
-    //// Oppgave 8 ////
-
 
 } // DobbeltLenketListe

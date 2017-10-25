@@ -10,10 +10,19 @@ import java.util.Comparator;
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("- Main");
 
-   /*     String[] s = {"Ole", null, "Per", "Kari", null};
+        String[] navn = {"Lars","Anders","Bodil","Kari","Per","Berit"}; Liste<String> liste = new DobbeltLenketListe<>(navn);
+        liste.forEach(s -> System.out.print(s + " ")); System.out.println();
+        for (String s : liste) System.out.print(s + " ");
+        // Utskrift:
+        // Lars Anders Bodil Kari Per Berit
+        // Lars Anders Bodil Kari Per Berit
+    /*    System.out.println("- Main");
+
+        String[] s = {"Ole", null, "Per", "Kari", null};
         Liste<String> liste = new DobbeltLenketListe<>(s);
+        liste.leggInn(1, "");
+        System.out.println(Arrays.toString(s));
         System.out.println(liste.antall() + " " + liste.tom());
 /*
         Character[] c = {'A','B','C','D','E','F','G','H','I','J',};
@@ -34,13 +43,20 @@ public class Main {
         // Lars Anders Bodil Kari Per Berit
 
         */
-        DobbeltLenketListe<String> liste =
+      /*  DobbeltLenketListe<String> liste =
                 new DobbeltLenketListe<>(new String[]
                         {"Birger","Lars","Anders","Bodil","Kari","Per","Berit"});
         liste.fjernHvis(navn -> navn.charAt(0) == 'B');
         // fjerner navn som starter med B
         System.out.println(liste + " " + liste.omvendtString());
         // Utskrift: [Lars, Anders, Kari, Per] [Per, Kari, Anders, Lars]
+*/
+
+/*        DobbeltLenketListe<String> liste = new DobbeltLenketListe<>(new String[]
+                {"Birger","Lars","Anders","Bodil","Kari","Per","Berit"});
+        liste.fjernHvis(navn -> navn.charAt(0) == 'B'); // fjerner navn som starter med B
+        System.out.println(liste + " " + liste.omvendtString());
+        // Utskrift: [Lars, Anders, Kari, Per] [Per, Kari, Anders, Lars]*/
 
     }
 }
