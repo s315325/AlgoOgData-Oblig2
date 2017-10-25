@@ -100,6 +100,7 @@ public class DobbeltLenketListe<T> implements Liste<T>
         else (hode = hode.neste).forrige = null;
     }
 
+    //hjelpemetode fra kompendiet
     private static void fratilKontroll(int tabelLengde, int fra, int til)
     {
         if (fra < 0)                                  // fra er negativ
@@ -164,7 +165,27 @@ public class DobbeltLenketListe<T> implements Liste<T>
     @Override
     public void leggInn(int indeks, T verdi)
     {
-        throw new UnsupportedOperationException("Ikke laget ennå!");
+        Objects.requireNonNull(verdi, "Ikke tillatt med null-verdier!");
+        indeksKontroll(indeks, true);
+        if (tom())                              // tom liste
+        {
+            hode = hale = new Node<>(verdi, null, null);
+        }
+        else if (indeks == 0)                   // ny verdi forrest
+        {
+            hode = hode.forrige = new Node<>(verdi, null, hode);
+        }
+        else if (indeks == antall)              // ny verdi bakerst
+        {
+            hale = hale.neste = new Node<>(verdi, hale, null);
+        }
+        else                                    // ny verdi på plass indeks
+        {
+            Node<T> p = finnNode(indeks);     // ny verdi skal til venstre for p
+            p.forrige = p.forrige.neste = new Node<>(verdi, p.forrige, p);
+        }
+        antall++;            // ny verdi i listen
+        endringer++;   // en endring i listen
     }
 
     @Override
@@ -189,20 +210,58 @@ public class DobbeltLenketListe<T> implements Liste<T>
     @Override
     public boolean fjern(T verdi)
     {
-        throw new UnsupportedOperationException("Ikke laget ennå!");
+        if (verdi == null) return false;  // ingen nullverdier i listen
+        for (Node<T> p = hode; p != null; p = p.neste)
+        {
+            if (p.verdi.equals(verdi))
+            {
+                fjernNode(p);   // bruker den private hjelpemetoden
+                return true;
+            }
+        }
+        return false;  // verdi ligger ikke i listen
     }
 
     @Override
     public T fjern(int indeks)
     {
-        throw new UnsupportedOperationException("Ikke laget ennå!");
+        indeksKontroll(indeks, false);
+        return fjernNode(finnNode(indeks)); // bruker de to hjelpemetodene
+    }
+
+    private T fjernNode(Node<T> p)  // private hjelpemetode
+    {
+        if (p == hode)
+        {
+            if (antall == 1) hode = hale = null;      // kun en verdi i listen
+            else (hode = hode.neste).forrige = null;  // fjerner den første
+        }
+        else if (p == hale) (hale = hale.forrige).neste = null;  // fjerner den siste
+        else (p.forrige.neste = p.neste).forrige = p.forrige;    // fjerner p
+        antall--;     // en mindre i listen
+        endringer++;  // en endring
+        return p.verdi;
     }
 
     @Override
     public void nullstill()
     {
-        throw new UnsupportedOperationException("Ikke laget ennå!");
+        Node<T> p = hode;
+        while (p != null)
+        {
+            Node<T> q = p.neste;
+            p.verdi = null;
+            p.forrige = null;
+            p.neste = null;
+            p = q;
+        }
+        hode = hale = null;
+        antall = 0;
+        endringer++;
     }
+    // Det viser seg at det er liten forskjell i effektivitet
+    // mellom nullstill() slik den er koden ovenfor og slik
+    // den er kodet under (som nullstill2)f
 
     @Override
     public String toString()
@@ -228,20 +287,36 @@ public class DobbeltLenketListe<T> implements Liste<T>
         return sb.toString();
     }
 
+    // bruker en variant av utvalgssortering
     public static <T> void sorter(Liste<T> liste, Comparator<? super T> c)
     {
-        throw new UnsupportedOperationException("Ikke laget ennå!");
+        for (int n = liste.antall(); n > 0; n--)
+        {
+            Iterator<T> iterator = liste.iterator();
+            int m = 0;
+            T minverdi = iterator.next();
+            for (int i = 1; i < n; i++)
+            {
+                T verdi = iterator.next();
+                if (c.compare(verdi,minverdi) < 0)
+                {
+                    m = i; minverdi = verdi;
+                }
+            }
+            liste.leggInn(liste.fjern(m));
+        }
     }
-
     @Override
     public Iterator<T> iterator()
     {
-        throw new UnsupportedOperationException("Ikke laget ennå!");
+        return new DobbeltLenketListeIterator();
     }
+
 
     public Iterator<T> iterator(int indeks)
     {
-        throw new UnsupportedOperationException("Ikke laget ennå!");
+        indeksKontroll(indeks, false);
+        return new DobbeltLenketListeIterator(indeks);
     }
 
     private class DobbeltLenketListeIterator implements Iterator<T>
@@ -268,23 +343,36 @@ public class DobbeltLenketListe<T> implements Liste<T>
             return denne != null;  // denne koden skal ikke endres!
         }
 
-        @Override
         public T next()
         {
-            throw new UnsupportedOperationException("Ikke laget ennå!");
+            if (!hasNext()) throw new NoSuchElementException("Ingen verdier!");
+            if (endringer != iteratorendringer)
+                throw new ConcurrentModificationException("Listen er endret!");
+            T tempverdi = denne.verdi;
+            denne = denne.neste;
+            fjernOK = true;
+            return tempverdi;
         }
+
 
         @Override
         public void remove()
         {
-            throw new UnsupportedOperationException("Ikke laget ennå!");
+            if (!fjernOK) throw
+                    new IllegalStateException("Kan ikke fjerne en verdi nå!");
+            if (iteratorendringer != endringer) throw
+                    new ConcurrentModificationException("Listen har blitt endret!");
+            // kommer vi hit, må next ha blitt kalt og en node kan fjernes
+            fjernOK = false;
+            fjernNode(denne == null ? hale : denne.forrige);  //den private hjelpemetoden
+            iteratorendringer++;  // en endring i iteratoren
         }
 
     } // DobbeltLenketListeIterator
 
     //// Oppgave 4 ////
 
-     public int indeksTil(T verdi) {
+    /* public int indeksTil(T verdi) {
 
         System.out.println("Oppgave 4"); // Should be removed
 
@@ -297,8 +385,19 @@ public class DobbeltLenketListe<T> implements Liste<T>
         } // a.verdi.equals(verdi) instead of NOT DONE? Copied shamelessly from the answers sheet.
 
         return -1;
-    }
+    }*/
 
+    @Override
+    public int indeksTil(T verdi)
+    {
+        if (verdi == null) return -1;
+        Node<T> p = hode;
+        for (int indeks = 0; indeks < antall; indeks++, p = p.neste)
+        {
+            if (p.verdi.equals(verdi)) return indeks;
+        }
+        return -1;
+    }
 
     public boolean inneholder(T verdi) {
 
