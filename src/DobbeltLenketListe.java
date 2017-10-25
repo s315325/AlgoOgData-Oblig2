@@ -244,26 +244,6 @@ public class DobbeltLenketListe<T> implements Liste<T>
     }
 
     @Override
-    public void nullstill()
-    {
-        Node<T> p = hode;
-        while (p != null)
-        {
-            Node<T> q = p.neste;
-            p.verdi = null;
-            p.forrige = null;
-            p.neste = null;
-            p = q;
-        }
-        hode = hale = null;
-        antall = 0;
-        endringer++;
-    }
-    // Det viser seg at det er liten forskjell i effektivitet
-    // mellom nullstill() slik den er koden ovenfor og slik
-    // den er kodet under (som nullstill2)f
-
-    @Override
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
@@ -390,5 +370,37 @@ public class DobbeltLenketListe<T> implements Liste<T>
     }
 
     //// Oppgave 5 /////
+
+    //// Oppgave 7 ////
+
+    @Override
+/*    public void nullstill() // KOPIERT FRA FASIT
+
+    {
+        Node<T> p = hode;
+        while (p != null)
+
+        {
+            Node<T> q = p.neste;
+            p.verdi = null;
+            p.forrige = null;
+            p.neste = null;
+            p = q;
+        }
+
+        hode = hale = null;
+        antall = 0;
+        endringer++;
+
+    }*/
+
+    public void nullstill2()
+
+    {
+        while (antall > 0) fjern(0);
+    }
+
+    //// Oppgave 8 ////
+
 
 } // DobbeltLenketListe
