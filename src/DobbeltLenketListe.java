@@ -262,6 +262,11 @@ public class DobbeltLenketListe<T> implements Liste<T>
         antall = 0;
         endringer++;
     }
+
+    @Override
+    public void nullstill2() {
+
+    }
     // Det viser seg at det er liten forskjell i effektivitet
     // mellom nullstill() slik den er koden ovenfor og slik
     // den er kodet under (som nullstill2)f
