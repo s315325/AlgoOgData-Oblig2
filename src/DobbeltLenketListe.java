@@ -1,21 +1,6 @@
-/////////// DobbeltLenketListe ////////////////////////////////////
-import com.sun.istack.internal.localization.NullLocalizable;
 
-import java.util.Comparator;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Comparator;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.StringJoiner;
+
+import java.util.*;
 
 public class DobbeltLenketListe<T> implements Liste<T>
 {
@@ -30,6 +15,8 @@ public class DobbeltLenketListe<T> implements Liste<T>
             this.verdi = verdi;
             this.forrige = forrige;
             this.neste = neste;
+
+
         }
 
         protected Node(T verdi)  // konstruktør
@@ -41,40 +28,31 @@ public class DobbeltLenketListe<T> implements Liste<T>
 
     // instansvariabler
     private Node<T> hode;          // peker til den første i listen
-    private Node hale;          // peker til den siste i listen
+    private Node<T> hale;          // peker til den siste i listen
     private int antall;            // antall noder i listen
-    private int endringer;   // antall endringer i listen
+    private int endringer;          // antall endringer i listen
 
     // hjelpemetode
-    private Node<T> finnNode(int indeks)
-    {
-        Node<T> tNode;
+    private Node<T> finnNode(int indeks) {
+        Node<T> node;
 
-        if (indeks < antall / 2)
-        {
-            // hode Fra høyre
-            tNode = hode;
-            for (int i = 0; i < indeks; i++)
-            {
-                tNode = tNode.neste;
+        if (indeks < antall/2) {
+            node = hode;  // leter fra hode mot høyre
+            for (int i = 0; i < indeks; i++) {
+                node = node.neste;
             }
         }
-        else
-        {
-            // hale fra venstre
-            tNode = hale;
-            for (int i = antall - 1; i > indeks; i--)
-            {
-                tNode = tNode.forrige;
+        else {
+            node = hale;  // leter fra hale mot venstre
+            for (int i = antall - 1; i > indeks; i--) {
+                node = node.forrige;
             }
         }
-        return tNode;
+        return node;
     }
 
-
     // konstruktør
-    public DobbeltLenketListe()
-    {
+    public DobbeltLenketListe() {
         hode = hale = null;
         antall = 0;
         endringer = 0;
@@ -82,249 +60,241 @@ public class DobbeltLenketListe<T> implements Liste<T>
 
     // konstruktør
     public DobbeltLenketListe(T[] a) {
-        this();         //Kaller på konstruktøren i Node-klassen
-        Objects.requireNonNull(a, "Tabllen er null!");
+        Objects.requireNonNull(a, "Tabellen a er null!");
+        hode = hale = new Node<>(null);
 
-        hode = hale = new Node<>(null); //Lager en ny  Node
-        //for (T verdi : a)
-        for(int i = 0; i< a.length; i++) //Lager en for-løkke som går igjennom T[]
-        {
+        for(int i = 0; i < a.length; i++){{
             T verdi = a[i];
-            if (verdi != null )
-            {
+            if (verdi != null ){
                 hale = hale.neste = new Node<>(verdi, hale, null);
                 antall++;
             }
         }
-        if (antall == 0) hode = hale = null;        //Fjerner Noden
-        else (hode = hode.neste).forrige = null;
+        }
+        if (antall == 0){
+            hode = hale = null;
+        }
+        else {
+            hode = hode.neste;
+            hode.forrige = null;
+        }
     }
 
-    //hjelpemetode fra kompendiet
-    private static void fratilKontroll(int tabelLengde, int fra, int til)
-    {
+    // subliste
+    public Liste<T> subliste(int fra, int til) {
+        fratilKontroll(antall, fra, til);
+        DobbeltLenketListe<T> liste = new DobbeltLenketListe<>();
+
+        Node<T> node = finnNode(fra);
+        for (int i = fra; i < til; i++){
+            liste.leggInn(node.verdi);
+            node = node.neste;
+        }
+        return liste;
+    }
+    private static void fratilKontroll(int antall, int fra, int til) {
         if (fra < 0)                                  // fra er negativ
             throw new IndexOutOfBoundsException
                     ("fra(" + fra + ") er negativ!");
-        if (til > tabelLengde)                             // til er utenfor tabellen
+
+        if (til > antall)                             // til er utenfor tabellen
             throw new IndexOutOfBoundsException
-                    ("til(" + til + ") > antall(" + tabelLengde + ")");
+                    ("til(" + til + ") > antall(" + antall + ")");
+
         if (fra > til)                                // fra er større enn til
             throw new IllegalArgumentException
                     ("fra(" + fra + ") > til(" + til + ") - illegalt intervall!");
     }
 
-
-    public Liste<T> subliste(int fra, int til)
-    {
-
-        fratilKontroll(antall, fra, til);
-
-        DobbeltLenketListe<T> liste = new DobbeltLenketListe<>();
-
-        Node<T> t = finnNode(fra);
-
-        for (int i = fra; i < til; i++)   // [fra:til>
-        {
-            liste.leggInn(t.verdi);
-            t = t.neste;
-        }
-
-        return liste;
-    }
-
-
     @Override
     public int antall()
     {
-       return antall;
+        return antall;
     }
 
     @Override
     public boolean tom()
     {
-
-        if (hode == null); //Sjekker om første lenken er tom
         return antall == 0;
-
     }
 
     @Override
-    public boolean leggInn(T verdi)
-    {
-        Objects.requireNonNull(verdi, "Tabellen er null!");
-        Node<T> p = new Node<>(verdi, hale, null);
-        hale = tom() ? (hode = p) : (hale.neste = p);
+    public boolean leggInn(T verdi) {
+        Objects.requireNonNull(verdi, "null-verdier ikke tillatt");
+        Node<T> node = new Node<>(verdi, hale, null);
+        if (tom()){
+            hale = hode = node;
+        }
+        else{
+            hale = hale.neste = node;
+        }
         antall++;
         endringer++;
+
         return true;
     }
 
     @Override
-    public void leggInn(int indeks, T verdi)
-    {
-        Objects.requireNonNull(verdi, "Ikke tillatt med null-verdier!");
+    public void leggInn(int indeks, T verdi) {
+        Objects.requireNonNull(verdi, "Ikke null-verdier!");
+
         indeksKontroll(indeks, true);
-        if (tom())                              // tom liste
-        {
+
+        if (tom())
             hode = hale = new Node<>(verdi, null, null);
-        }
-        // verdien legges inn først
         else if (indeks == 0)
-        {
             hode = hode.forrige = new Node<>(verdi, null, hode);
-        }
-        else if (indeks == antall)              // ny verdi bakerst
-        {
+        else if (indeks == antall)
             hale = hale.neste = new Node<>(verdi, hale, null);
+        else {
+            Node<T> node = finnNode(indeks);
+            node.forrige = node.forrige.neste = new Node<>(verdi, node.forrige, node);
         }
-        else                                    // ny verdi på plass indeks
-        {
-            Node<T> p = finnNode(indeks);     // ny verdi skal til venstre for p
-            p.forrige = p.forrige.neste = new Node<>(verdi, p.forrige, p);
-        }
-        antall++;            // ny verdi i listen
-        endringer++;   // en endring i listen
+        antall++;
+        endringer++;
+    }
+
+    @Override
+    public boolean inneholder(T verdi) {
+        return indeksTil(verdi) != -1;
     }
 
     @Override
     public T hent(int indeks)
     {
         indeksKontroll(indeks, false);
+
         return finnNode(indeks).verdi;
     }
 
     @Override
-    public T oppdater(int indeks, T nyverdi)
-    {
-        Objects.requireNonNull(nyverdi, "null verdier kan ikke legges inn!");
-        indeksKontroll(indeks, false);
-        Node<T> n = finnNode(indeks);
-        T gammelverdi = n.verdi;
-        n.verdi = nyverdi;
-        endringer++;
-        return gammelverdi;
+    public int indeksTil(T verdi) {
+        if (verdi == null) return -1;
+        Node<T> node = this.hode;
+
+        for (int i = 0; i < antall; i++ ) {
+            if (node.verdi.equals(verdi)){
+                return i;
+            }
+            node = node.neste;
+        }
+
+        return -1;
     }
 
     @Override
-    public boolean fjern(T verdi)
+    public T oppdater(int indeks, T nyVerdi)
     {
-        if (verdi == null) return false;  // ingen nullverdier i listen
-        for (Node<T> p = hode; p != null; p = p.neste)
-        {
-            if (p.verdi.equals(verdi))
-            {
-                fjernNode(p);   // bruker den private hjelpemetoden
+        Objects.requireNonNull(nyVerdi, "NyVerdi kan ikke være null!");
+        indeksKontroll(indeks, false);
+
+        Node<T> node = finnNode(indeks);
+        T gammelVerdi = node.verdi;
+        node.verdi = nyVerdi;
+
+        endringer++;
+        return gammelVerdi;
+    }
+
+    @Override
+    public boolean fjern(T verdi) {
+        if (verdi == null) return false;
+        Node<T> node = hode;
+        for (int i = 0; i < antall;i++) {
+            if (node == null) break;
+            if (node.verdi.equals(verdi)) {
+                fjerneNode(node);
                 return true;
             }
+
+            node = node.neste;
         }
-        return false;  // verdi ligger ikke i listen
+        return false;
     }
 
     @Override
-    public T fjern(int indeks)
-    {
+    public T fjern(int indeks) {
         indeksKontroll(indeks, false);
-        return fjernNode(finnNode(indeks)); // bruker de to hjelpemetodene
+
+        return fjerneNode(finnNode(indeks));
     }
-
-    // Finner ikke denne hjelpemetoden
-
-    private T fjernNode(Node<T> p)  // private hjelpemetode
-    {
-        if (p == hode)
-        {
-            if (antall == 1) hode = hale = null;      // kun en verdi i listen
-            else (hode = hode.neste).forrige = null;  // fjerner den første
+    private T fjerneNode(Node<T> node){
+        if (node == hode){
+            if (antall == 1)
+                hode = hale = null;
+            else {
+                hode = hode.neste;
+                hode.forrige = null;
+            }
         }
-        else if (p == hale) (hale = hale.forrige).neste = null;  // fjerner den siste
-        else (p.forrige.neste = p.neste).forrige = p.forrige;    // fjerner p
-        antall--;     // en mindre i listen
-        endringer++;  // en endring
-        return p.verdi;
+        else if (node == hale) {
+            hale = hale.forrige;
+            hale.neste = null;
+        }
+        else {
+            node.forrige.neste = node.neste;
+            node.neste.forrige = node.forrige;
+        }
+        antall--;
+        endringer++;
+
+        return node.verdi;
+
     }
 
+    //Denne metoden tok kortere tid en, måte 2.
     @Override
-    public void nullstill()
-    {
-        Node<T> p = hode;
-        while (p != null)
-        {
-            Node<T> q = p.neste;
-            p.verdi = null;
-            p.forrige = null;
-            p.neste = null;
-            p = q;
+    public void nullstill() {
+        Node<T> node = hode;
+        while (node != null) {
+            node.verdi = null;
+            node.neste = null;
+            node.forrige = null;
+            node = node.neste;
         }
-        hode = hale = null;
+        hode = null;
+        hale = null;
+
         antall = 0;
         endringer++;
-    }
-
-    @Override
-    public void nullstill2() {
 
     }
-    // Det viser seg at det er liten forskjell i effektivitet
-    // mellom nullstill() slik den er koden ovenfor og slik
-    // den er kodet under (som nullstill2)f
+
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append('[');
-        for (Node<T> i = hode; i != null; i = i.neste) {
-            sb.append(String.valueOf(i.verdi));
-            if(i.neste != null){
-                sb.append(",");
+        for (Node<T> node = hode; node != null; node = node.neste) {
+            sb.append(String.valueOf(node.verdi));
+            if (node.neste != null){
+                sb.append(", ");
             }
-
         }
         sb.append(']');
         return sb.toString();
-
     }
 
     public String omvendtString() {
         StringBuilder sb = new StringBuilder();
         sb.append('[');
-        for (Node<T> i = hale; i != null; i = i.forrige) {
-            sb.append(String.valueOf(i.verdi));
-            if (i.forrige != null) {
-                sb.append(",");
+        for (Node<T> node = hale; node != null; node = node.forrige){
+            sb.append(String.valueOf(node.verdi));
+            if (node.forrige != null){
+                sb.append(", ");
             }
-
         }
         sb.append(']');
         return sb.toString();
     }
 
-    // bruker en variant av utvalgssortering
-    public static <T> void sorter(Liste<T> liste, Comparator<? super T> c)
-    {
-        for (int n = liste.antall(); n > 0; n--)
-        {
-            Iterator<T> iterator = liste.iterator();
-            int m = 0;
-            T minverdi = iterator.next();
-            for (int i = 1; i < n; i++)
-            {
-                T verdi = iterator.next();
-                if (c.compare(verdi,minverdi) < 0)
-                {
-                    m = i; minverdi = verdi;
-                }
-            }
-            liste.leggInn(liste.fjern(m));
-        }
-    }
+
+
     @Override
     public Iterator<T> iterator()
     {
         return new DobbeltLenketListeIterator();
     }
-
 
     public Iterator<T> iterator(int indeks)
     {
@@ -332,93 +302,74 @@ public class DobbeltLenketListe<T> implements Liste<T>
         return new DobbeltLenketListeIterator(indeks);
     }
 
-    private class DobbeltLenketListeIterator implements Iterator<T>
-    {
+    private class DobbeltLenketListeIterator implements Iterator<T> {
         private Node<T> denne;
         private boolean fjernOK;
         private int iteratorendringer;
 
-        private DobbeltLenketListeIterator()
-        {
+        private DobbeltLenketListeIterator() {
             denne = hode;     // denne starter på den første i listen
             fjernOK = false;  // blir sann når next() kalles
             iteratorendringer = endringer;  // teller endringer
         }
 
-        private DobbeltLenketListeIterator(int indeks)
-        {
-            throw new UnsupportedOperationException("Ikke laget ennå!");
+        private DobbeltLenketListeIterator(int indeks) {
+            denne = finnNode(indeks);
+            fjernOK = false;
+            iteratorendringer = endringer;
         }
 
         @Override
-        public boolean hasNext()
-        {
+        public boolean hasNext() {
             return denne != null;  // denne koden skal ikke endres!
         }
 
-        public T next()
-        {
-            if (!hasNext()) throw new NoSuchElementException("Ingen verdier!");
+        @Override
+        public T next() {
             if (endringer != iteratorendringer)
                 throw new ConcurrentModificationException("Listen er endret!");
-            T tempverdi = denne.verdi;
-            denne = denne.neste;
+            if (!hasNext())
+                throw new NoSuchElementException("Ingen neste verdi!");
             fjernOK = true;
-            return tempverdi;
+
+            T temp = denne.verdi;
+            denne = denne.neste;
+            return temp;
         }
 
-
         @Override
-        public void remove()
-        {
-            if (!fjernOK) throw
-                    new IllegalStateException("Ikke tillatt å fjerne verdien!");
-            if (iteratorendringer != endringer) throw
-                    new ConcurrentModificationException("Listen har blitt endret!");
-
+        public void remove() {
+            if (!fjernOK)
+                throw new IllegalStateException("Verdien kan ikke fjernes nå!");
+            if (endringer != iteratorendringer)
+                throw new ConcurrentModificationException("Listen har blitt endret!");
             fjernOK = false;
-
-
-            fjernNode(denne == null ? hale : denne.forrige);  //den private hjelpemetoden
-            iteratorendringer++;  // en endring i iteratoren
+            if (denne == null){
+                fjerneNode(hale);
+            }else {
+                fjerneNode(denne.forrige);
+            }
+            iteratorendringer++;
         }
 
     } // DobbeltLenketListeIterator
 
-    //// Oppgave 4 ////
 
-    /* public int indeksTil(T verdi) {
 
-        System.out.println("Oppgave 4"); // Should be removed
-
-        if (verdi == null)  return -1;
-
-        Node<T> a = hode;
-
-        for (int indeks = 0; indeks < antall; indeks++, a = a.neste) {
-            if (NOT DONE) return indeks;
-        } // a.verdi.equals(verdi) instead of NOT DONE? Copied shamelessly from the answers sheet.
-
-        return -1;
-    }*/
-
-    @Override
-    public int indeksTil(T verdi)
-    {
-        if (verdi == null) return -1;
-        Node<T> p = hode;
-        for (int indeks = 0; indeks < antall; indeks++, p = p.neste)
-        {
-            if (p.verdi.equals(verdi)) return indeks;
+    public static <T> void sorter(Liste<T> liste, Comparator<? super T> c) {
+        for (int i = liste.antall(); i > 0; i--) {
+            Iterator<T> iterator = liste.iterator();
+            int m = 0;
+            T min = iterator.next();
+            for (int j = 1; j < i; j++) {
+                T verdi = iterator.next();
+                if (c.compare(verdi,min) < 0) {
+                    m = j;
+                    min = verdi;
+                }
+            }
+            liste.leggInn(liste.fjern(m));
         }
-        return -1;
     }
-
-    public boolean inneholder(T verdi) {
-
-        return indeksTil(verdi) != -1;
-    }
-
-    //// Oppgave 5 /////
 
 } // DobbeltLenketListe

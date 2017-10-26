@@ -12,7 +12,6 @@ public interface Liste<T> extends Beholder<T>
     public int antall();                       // Antallet i listen
     public boolean tom();                      // Er listen tom?
     public void nullstill();                   // Listen nullstilles (og tømmes)
-    public void nullstill2();
     public Iterator<T> iterator();             // En iterator
 
     public default String melding(int indeks)  // Unntaksmelding
