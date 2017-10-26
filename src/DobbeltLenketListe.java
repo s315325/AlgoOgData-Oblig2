@@ -83,9 +83,9 @@ public class DobbeltLenketListe<T> implements Liste<T>
     // konstruktør
     public DobbeltLenketListe(T[] a) {
         this();         //Kaller på konstruktøren i Node-klassen
-        //Objects.requireNonNull(a, "Tabllen er null!");
+        Objects.requireNonNull(a, "Tabllen er null!");
 
-        hode = hale = new Node<>(null); //Lager en ny Node
+        hode = hale = new Node<>(null); //Lager en ny  Node
         //for (T verdi : a)
         for(int i = 0; i< a.length; i++) //Lager en for-løkke som går igjennom T[]
         {
@@ -137,8 +137,6 @@ public class DobbeltLenketListe<T> implements Liste<T>
     @Override
     public int antall()
     {
-       for( Node T = hode; T != null; T = T.neste)
-           antall++;
        return antall;
     }
 
@@ -277,19 +275,26 @@ public class DobbeltLenketListe<T> implements Liste<T>
         StringBuilder sb = new StringBuilder();
         sb.append('[');
         for (Node<T> i = hode; i != null; i = i.neste) {
-            sb.append(String.valueOf(i.verdi)+ ",");
+            sb.append(String.valueOf(i.verdi));
+            if(i.neste != null){
+                sb.append(",");
+            }
+
         }
         sb.append(']');
         return sb.toString();
 
     }
 
-    public String omvendtString()
-    {
+    public String omvendtString() {
         StringBuilder sb = new StringBuilder();
         sb.append('[');
-        for (Node<T> i = hale; i != null; i = i.forrige){
-            sb.append(String.valueOf(i.verdi)+ ",");
+        for (Node<T> i = hale; i != null; i = i.forrige) {
+            sb.append(String.valueOf(i.verdi));
+            if (i.forrige != null) {
+                sb.append(",");
+            }
+
         }
         sb.append(']');
         return sb.toString();
